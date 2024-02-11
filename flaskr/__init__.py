@@ -1,6 +1,7 @@
 import os
 
 from flask import Flask
+from sqlalchemy import create_engine
 
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
@@ -22,6 +23,8 @@ def create_app(test_config=None):
     @app.route('/hello')
     def hello():
         return 'Hello World!'
+    
+    alchemy_engine = create_engine("sqlite://", echo=True)
     
     from . import db
     db.init_app(app)
