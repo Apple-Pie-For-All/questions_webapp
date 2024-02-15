@@ -17,7 +17,7 @@ def init_db():
     db = get_db()
     
     # Other code that needs to execute on start up.
-    # Mostly here as legacy for load sql schema in sqlite3
+    # Mostly here as legacy to load sql schema when using sqlite3
 
 @click.command('init-db')
 def init_db_command():
