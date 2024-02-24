@@ -9,6 +9,9 @@ bp = Blueprint("blog", __name__)
 
 @bp.route('/')
 def index():
+    '''
+    Homepage to display posts
+    '''
     db = get_db()
     posts = db.execute(
         'SELECT p.id, title, body, created, author_id, username'
@@ -20,6 +23,9 @@ def index():
 @bp.route('/create', methods=("GET", "POST"))
 @login_required
 def create():
+    '''
+    Allows logged in users to create new posts
+    '''
     if request.method == 'POST':
         title = request.form['title']
         body = request.form['body']
@@ -42,6 +48,10 @@ def create():
     return render_template('blog/create.html')
 
 def get_post(id, check_author=True):
+    '''
+    Fetches a post from the db by id. Defaults to verifying that the
+    requester is also the creator
+    '''
     post = get_db().execute(
         'SELECT p.id, title, body, created, author_id, username'
         ' FROM post p JOIN user u ON p.author_id = u.id'
@@ -60,6 +70,9 @@ def get_post(id, check_author=True):
 @bp.route('/<int:id>/update', methods=('GET', 'POST'))
 @login_required
 def update(id):
+    '''
+    Updates a post for a user
+    '''
     post = get_post(id)
 
     if request.method == 'POST':
@@ -87,6 +100,9 @@ def update(id):
 @bp.route('/<int:id>/delete', methods=('POST',))
 @login_required
 def delete(id):
+    '''
+    Deletes designated post when author requests
+    '''
     get_post(id)
     db = get_db()
     db.execute('DELETE FROM post WHERE id = ?', (id,))

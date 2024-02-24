@@ -11,6 +11,10 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
+    '''
+    Handles registering users, both displaying the form via GET and entering
+    the new user via POST.
+    '''
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -36,10 +40,15 @@ def register():
         
         flash(error)
     
+    # If POST didn't go anywhere or is GET, render the page
     return render_template('auth/register.html')
 
 @bp.route('/login', methods=('GET', 'POST'))
 def login():
+    '''
+    Handles logging in known users. Displays the log in page with GET and
+    checks the credentials with POST
+    '''
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -61,10 +70,14 @@ def login():
 
         flash(error)
 
+    # If POST didn't go anywhere or is GET, render the page
     return render_template('auth/login.html')
 
 @bp.before_app_request
 def load_logged_in_user():
+    '''
+    Fetches user details from db before loading a request
+    '''
     user_id = session.get('user_id')
 
     if user_id is None:
@@ -76,10 +89,16 @@ def load_logged_in_user():
 
 @bp.route('/logout')
 def logout():
+    '''
+    Place to tie loose ends before logging a user out
+    '''
     session.clear()
     return redirect(url_for('index'))
 
 def login_required(view):
+    '''
+    Decorator to ensure logged in user. If not, redirects to log in page
+    '''
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         if g.user is None:
