@@ -22,7 +22,7 @@ def init_db():
 @click.command('init-db')
 def init_db_command():
     init_db()
-    click.echo('Initialed the database with SQLalchemy.')
+    click.echo('Initialized the database with SQLalchemy.')
 
 def init_app(app):
     app.teardown_appcontext(close_db)
