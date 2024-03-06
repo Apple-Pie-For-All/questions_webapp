@@ -2,9 +2,7 @@ from typing import List, Optional
 from datetime import datetime
 from sqlalchemy import ForeignKey, String, func
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
-
-class Base(DeclarativeBase):
-    pass
+from flaskr.db_alchemy import Base
 
 class User(Base):
     __tablename__ = 'user'

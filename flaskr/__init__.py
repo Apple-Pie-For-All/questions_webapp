@@ -27,8 +27,6 @@ def create_app(test_config=None):
     def hello():
         return 'Hello World!'
     
-    alchemy_engine = create_engine("sqlite://", echo=True)
-    
     # Register functions and elements from other files. 
     from . import db
     db.init_app(app)
@@ -39,5 +37,10 @@ def create_app(test_config=None):
     from . import blog
     app.register_blueprint(blog.bp)
     app.add_url_rule('/', endpoint='index')
+
+    from flaskr.db_alchemy import db_session
+    @app.teardown_appcontext
+    def shutdown_session(exception=None):
+        db_session.remove()
 
     return app
