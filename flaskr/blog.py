@@ -4,6 +4,9 @@ from flask import (
 from werkzeug.exceptions import abort
 from flaskr.auth import login_required
 from flaskr.db import get_db
+from .db_alchemy import db_session
+from .data_model import User, Post
+from sqlalchemy import select
 
 bp = Blueprint("blog", __name__)
 
@@ -12,13 +15,15 @@ def index():
     '''
     Homepage to display posts
     '''
-    db = get_db()
-    posts = db.execute(
-        'SELECT p.id, title, body, created, author_id, username'
-        ' FROM post p JOIN user u ON p.author_id = u.id'
-        ' ORDER BY created DESC'
-    ).fetchall()
-    return render_template('blog/index.html', posts=posts)
+    # db = get_db()
+    # posts = db.execute(
+    #     'SELECT p.id, title, body, created, author_id, username'
+    #     ' FROM post p JOIN user u ON p.author_id = u.id'
+    #     ' ORDER BY created DESC'
+    # ).fetchall()
+    q = select(Post).join(Post.author_id)
+    post_list = db_session.scalars(q).all()
+    return render_template('blog/index.html', posts=post_list)
 
 @bp.route('/create', methods=("GET", "POST"))
 @login_required
@@ -36,13 +41,17 @@ def create():
         if error is not None:
             flash(error)
         else:
-            db = get_db()
-            db.execute(
-                'INSERT INTO post (title, body, author_id)'
-                ' VALUES (?, ?, ?)',
-                (title, body, g.user['id'])
-            )
-            db.commit()
+            # db = get_db()
+            # db.execute(
+            #     'INSERT INTO post (title, body, author_id)'
+            #     ' VALUES (?, ?, ?)',
+            #     (title, body, g.user['id'])
+            # )
+            # db.commit()
+            new_post = Post(title, body, g.user['id'])
+            db_session.add(new_post)
+            db_session.commit()
+            
             return redirect(url_for('blog.index'))
         
     return render_template('blog/create.html')
