@@ -22,8 +22,8 @@ class Post(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     author_id: Mapped[int] = mapped_column(ForeignKey('user.id'))
     created: Mapped[datetime] = mapped_column(insert_default=func.now())
-    title: Mapped[str]
-    body: Mapped[str]
+    title: Mapped[str] = mapped_column(String, nullable=False)
+    body: Mapped[str] = mapped_column(String, nullable=False)
 
     author = relationship('User', back_populates='posts')
 
