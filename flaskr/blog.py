@@ -7,6 +7,7 @@ from flaskr.db import get_db
 from .db_alchemy import db_session
 from .data_model import User, Post
 from sqlalchemy import select
+from sqlalchemy.orm import joinedload
 
 bp = Blueprint("blog", __name__)
 
@@ -16,13 +17,17 @@ def index():
     Homepage to display posts
     '''
     # db = get_db()
-    # posts = db.execute(
+    # post_list = db.execute(
     #     'SELECT p.id, title, body, created, author_id, username'
     #     ' FROM post p JOIN user u ON p.author_id = u.id'
     #     ' ORDER BY created DESC'
     # ).fetchall()
-    q = select(Post).join(Post.author_id)
-    post_list = db_session.scalars(q).all()
+
+    # Use select() with joinedload to eagerly load the related User objects,
+    # reducing queries downstream
+    stmt = select(Post).options(joinedload(Post.author)).order_by(Post.created.desc())
+    post_list = db_session.scalars(stmt).all()
+
     return render_template('blog/index.html', posts=post_list)
 
 @bp.route('/create', methods=("GET", "POST"))
@@ -51,7 +56,7 @@ def create():
             new_post = Post(title, body, g.user['id'])
             db_session.add(new_post)
             db_session.commit()
-            
+
             return redirect(url_for('blog.index'))
         
     return render_template('blog/create.html')
@@ -61,17 +66,20 @@ def get_post(id, check_author=True):
     Fetches a post from the db by id. Defaults to verifying that the
     requester is also the creator
     '''
-    post = get_db().execute(
-        'SELECT p.id, title, body, created, author_id, username'
-        ' FROM post p JOIN user u ON p.author_id = u.id'
-        ' WHERE p.id = ?',
-        (id,)
-    ).fetchone()
+    # post = get_db().execute(
+    #     'SELECT p.id, title, body, created, author_id, username'
+    #     ' FROM post p JOIN user u ON p.author_id = u.id'
+    #     ' WHERE p.id = ?',
+    #     (id,)
+    # ).fetchone()
+
+    stmt = select(Post).where(Post.id == id)
+    post = db_session.scalars(stmt).first()
 
     if post is None:
         abort(404, f"Post id {id} doesn't exist.")
 
-    if check_author and post['author_id'] != g.user['id']:
+    if check_author and post.author_id != g.user['id']:
         abort(403)
 
     return post
