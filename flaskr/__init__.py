@@ -28,8 +28,8 @@ def create_app(test_config=None):
         return 'Hello World!'
     
     # Register functions and elements from other files. 
-    from . import db
-    db.init_app(app)
+    from . import db_alchemy
+    db_alchemy.init_app(app)
 
     from . import auth
     app.register_blueprint(auth.bp)
