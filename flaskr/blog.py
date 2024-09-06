@@ -103,13 +103,13 @@ def update(id):
         if error is not None:
             flash(error)
         else:
-            db = get_db()
-            db.execute(
-                'UPDATE post SET title = ?, body = ?'
-                ' WHERE id = ?',
-                (title, body, id)
-            )
-            db.commit()
+            # Modify the existing Post object
+            post.title = title
+            post.body = body
+
+            # Commit the session to persist changes
+            db_session.commit()
+
             return redirect(url_for('blog.index'))
 
     return render_template('blog/update.html', post=post)
@@ -120,8 +120,12 @@ def delete(id):
     '''
     Deletes designated post when author requests
     '''
-    get_post(id)
-    db = get_db()
-    db.execute('DELETE FROM post WHERE id = ?', (id,))
-    db.commit()
+    post = get_post(id)
+    
+    if post.author_id != g.user['id']:
+        abort(403)
+
+    # Delete the post from the database
+    db_session.delete(post)
+    db_session.commit()
     return redirect(url_for('blog.index'))
