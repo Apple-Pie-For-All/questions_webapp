@@ -53,7 +53,7 @@ def create():
             #     (title, body, g.user['id'])
             # )
             # db.commit()
-            new_post = Post(title, body, g.user['id'])
+            new_post = Post(title=title, body=body, author_id=g.user.id)
             db_session.add(new_post)
             db_session.commit()
 
@@ -121,7 +121,7 @@ def delete(id):
     Deletes designated post when author requests
     '''
     post = get_post(id)
-    
+
     if post.author_id != g.user['id']:
         abort(403)
 
