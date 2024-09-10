@@ -37,7 +37,7 @@ def register():
                 #     (username, generate_password_hash(password))
                 # )
                 # db.commit()
-                new_user = User(id=db_session, password=generate_password_hash(password))
+                new_user = User(name=username, password=generate_password_hash(password))
                 db_session.add(new_user)
                 db_session.commit()
             except IntegrityError:
@@ -95,7 +95,7 @@ def load_logged_in_user():
     if user_id is None:
         g.user = None
     else:
-        stmt = select(User).where(User.name == user_id)
+        stmt = select(User).where(User.id == user_id)
         g.user = db_session.scalars(stmt).first()
 
 @bp.route('/logout')
