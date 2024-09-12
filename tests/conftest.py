@@ -3,6 +3,10 @@ import tempfile
 
 import pytest
 from flaskr import create_app
+from sqlalchemy import event
+from sqlalchemy.orm import sessionmaker
+from flaskr.data_model import User, Post
+from flaskr.db_alchemy import Base, db_session
 from flaskr.db import get_db, init_db
 
 with open(os.path.join(os.path.dirname(__file__), 'data.sql'), 'rb') as f:
@@ -15,17 +19,20 @@ def app():
 
     app = create_app({
         'TESTING': True,
+        'SQLALCHEMY_URI': 'sqlite:///:memory:',  # In-memory SQLite for tests
+        'SQLALCHEMY_TRACK_MODIFICATIONS': False,
         'DATABASE': db_path,
     })
 
+    # Create tables for tests
     with app.app_context():
-        init_db()
-        get_db().executescript(_data_sql) # Load test data
+        Base.metadata.create_all(bind=db_session.bind)
 
     yield app
 
-    os.close(db_fd)
-    os.unlink(db_path)
+    # Drop all tables after tests
+    with app.app_context():
+        Base.metadata.drop_all(bind=db.engine)
 
 
 @pytest.fixture
