@@ -15,6 +15,9 @@ with open(os.path.join(os.path.dirname(__file__), 'data.sql'), 'rb') as f:
 
 @pytest.fixture
 def app():
+    '''
+    Prep app for testing
+    '''
     db_fd, db_path = tempfile.mkstemp() # setup test db
 
     app = create_app({
@@ -32,8 +35,30 @@ def app():
 
     # Drop all tables after tests
     with app.app_context():
-        Base.metadata.drop_all(bind=db.engine)
+        Base.metadata.drop_all(bind=db_session.bind)
 
+@pytest.fixture
+def db_session(app):
+    """
+    Returns an active SQLAlchemy session for testing. 
+    Ensures a clean connection.
+    """
+    # Create a new session for each test
+    connection = db_session.bind.connect()
+    transaction = connection.begin()
+
+    # Use sessionmaker to bind the session to the connection
+    Session = sessionmaker(bind=connection)
+    session = Session()
+
+    yield session
+
+    # Rollback after each test
+    transaction.rollback()
+    connection.close()
+
+    # Clean up the session
+    session.close()
 
 @pytest.fixture
 def client(app):
