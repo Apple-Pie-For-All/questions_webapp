@@ -6,7 +6,8 @@ from flaskr.db_alchemy import Base
 
 class User(Base):
     '''
-    Define a User table for the ORM. Password should be a SHA256 hash
+    Define a User table for the ORM with name and password. 
+    Password should be a SHA256 hash
     '''
     __tablename__ = 'user'
 
@@ -21,7 +22,7 @@ class User(Base):
     
 class Post(Base):
     '''
-    Define a Post table for the ORM.
+    Define a Post table for the ORM with author_id, created(datetime), title, and body.
     '''
     __tablename__ = 'post'
 
