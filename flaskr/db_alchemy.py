@@ -9,13 +9,15 @@ Base.query = db_session.query_property()
 
 def init_db(engine):
     # import all modules here that might define models so that
-    # they will be registered properly on the metadata.  Otherwise
-    # you will have to import them first before calling init_db()
+    # they will be registered properly in the metadata.
     from . import data_model
     Base.metadata.create_all(bind=engine)
 
 @click.command('init-db')
 def init_db_command():
+    '''
+    Define cmdline arg to init database per ORM model. Might be obsolete.
+    '''
     init_db(db_session.bind)
     click.echo('Initialized the database with SQLalchemy.')
 

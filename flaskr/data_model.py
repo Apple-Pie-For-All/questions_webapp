@@ -5,6 +5,9 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from flaskr.db_alchemy import Base
 
 class User(Base):
+    '''
+    Define a User table for the ORM. Password should be a SHA256 hash
+    '''
     __tablename__ = 'user'
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -17,6 +20,9 @@ class User(Base):
         return f"User(id={self.id}, name={self.name})"
     
 class Post(Base):
+    '''
+    Define a Post table for the ORM.
+    '''
     __tablename__ = 'post'
 
     id: Mapped[int] = mapped_column(primary_key=True)

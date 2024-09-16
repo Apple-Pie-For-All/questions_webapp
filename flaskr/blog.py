@@ -63,8 +63,9 @@ def create():
 
 def get_post(id, check_author=True):
     '''
-    Fetches a post from the db by id. Defaults to verifying that the
-    requester is also the creator
+    Fetches a post from the db by id. Returns 404 if not found. 
+    Defaults to verifying that the requester is also the creator. Returns 403
+    if the requester is not the creator.
     '''
     # post = get_db().execute(
     #     'SELECT p.id, title, body, created, author_id, username'
@@ -92,6 +93,7 @@ def update(id):
     '''
     post = get_post(id)
 
+    # 
     if request.method == 'POST':
         title = request.form['title']
         body = request.form['body']
@@ -118,7 +120,8 @@ def update(id):
 @login_required
 def delete(id):
     '''
-    Deletes designated post when author requests
+    Deletes designated post when author requests. 
+    Returns 403 if user is not author.
     '''
     post = get_post(id)
 

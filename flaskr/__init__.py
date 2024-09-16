@@ -8,9 +8,12 @@ def create_app(test_config=None):
     Factory which generates the web app
     '''
     app = Flask(__name__, instance_relative_config=True)
+
+    # Configure settings for local development. Should pull from config file in prod
     app.config.from_mapping(
         SECRET_KEY = 'DEV',
         DATABASE = os.path.join(app.instance_path, 'flaskr.sqlite'),
+        SQLALCHEMY_URI = 'sqlite:///' + os.path.join(app.instance_path, 'flaskr.sqlite'),
     )
 
     if test_config is None:
