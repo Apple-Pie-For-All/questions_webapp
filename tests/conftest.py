@@ -1,9 +1,11 @@
 import os
 import tempfile
 
+from werkzeug.security import check_password_hash, generate_password_hash
+
 import pytest
 from flaskr import create_app
-from sqlalchemy import event
+from sqlalchemy import event, select
 from sqlalchemy.orm import sessionmaker
 from flaskr.data_model import User, Post
 from flaskr.db_alchemy import Base, db_session
@@ -30,6 +32,8 @@ def app():
     # Create tables for tests
     with app.app_context():
         Base.metadata.create_all(bind=db_session.bind)
+        fill_db(db_session)
+
 
     yield app
 
@@ -61,6 +65,21 @@ def db_session(app):
     session.close()
 
 @pytest.fixture
+def fill_db(db_session):
+    '''
+    Creates dummy data to test app with
+    '''
+    user1 = User(name='tester', password=generate_password_hash('test_password'))
+    user2 = User(name='other_tester', password=generate_password_hash('other_password'))
+    db_session.add(user1)
+    db_session.add(user2)
+
+    # Need to get primary key from the database (SQLalchemy lets the db handle this)
+    stmt = select(User).where(User.name=='tester')
+    committed_user1 = db_session.scalars(stmt).first()
+    post1 = Post(author_id=committed_user1.id, title='Test Post', body='A full body of text to test')
+
+@pytest.fixture
 def client(app):
     return app.test_client()
 
@@ -82,6 +101,7 @@ class AuthActions(object):
 
     def logout(self):
         return self._client.get('/auth/logout')
+    
 @pytest.fixture
 def auth(client):
     return AuthActions(client)
