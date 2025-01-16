@@ -2,22 +2,27 @@ import sqlite3
 
 import pytest
 from flaskr.db import get_db
+from flaskr.db_alchemy import db_session
 
 
-def test_get_close_db(app):
-
-    # Expect the db to be the same with each call
+def test_db_session_lifecycle(app):
+    # Ensure the app is in the correct context
     with app.app_context():
-        db = get_db()
-        assert db is get_db()
+        session1 = db_session
+        session2 = db_session
 
-    # The following code ensured that db connection returned the proper error
-    # TODO Not sure if a replacement is necessary with sql_alchemy
-    # with pytest.raises(sqlite3.ProgrammingError) as e:
-    #     db.execute('SELECT 1')
+        # Assert that sessions within the same context are the same
+        assert session1 is session2
 
-    # Expect db to be closed
-    assert 'closed' in str(e.value)
+        # Perform an operation to confirm session functionality
+        session1.execute("SELECT 1") 
+
+        # Close the session
+        session1.remove()
+        
+        with pytest.raises(Exception) as e:
+            session1.execute("SELECT 1") 
+        assert "closed" in str(e.value).lower()
 
 def test_init_db_command(runner, monkeypatch):
     class Recorder(object):
