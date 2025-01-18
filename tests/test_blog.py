@@ -3,6 +3,9 @@ from flaskr.db import get_db
 
 
 def test_index(client, auth):
+    """
+    Checks that page displays login credentials correctly
+    """
     response = client.get('/')
     assert b"Log In" in response.data
     assert b"Register" in response.data
@@ -20,6 +23,9 @@ def test_index(client, auth):
     '/1/delete',
 ))
 def test_login_required(client, path):
+    """
+    Tests that users are required to login to access CRUDI features
+    """
     response = client.post(path)
     assert response.headers["Location"] == "/auth/login"
 
