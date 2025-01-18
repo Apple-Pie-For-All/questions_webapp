@@ -1,5 +1,9 @@
 import pytest
+from flask import g, session
 from flaskr.db import get_db
+from sqlalchemy import select, update
+from flaskr.db_alchemy import db_session
+from flaskr.data_model import User, Post
 
 
 def test_index(client, auth):
@@ -36,9 +40,8 @@ def test_author_required(app, client, auth):
     """
     # change the post author to another user
     with app.app_context():
-        db = get_db()
-        db.execute('UPDATE post SET author_id = 2 WHERE id = 1')
-        db.commit()
+        stmt = update(Post).where(Post.author_id == session['user_id']).values(author_id= session['user_id']+1) # TODO, may be rejected as invalid foreign key, need workaround
+        session.execute(stmt)
 
     auth.login()
     # current user can't modify other user's post
