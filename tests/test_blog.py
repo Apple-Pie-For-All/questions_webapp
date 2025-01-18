@@ -31,6 +31,9 @@ def test_login_required(client, path):
 
 
 def test_author_required(app, client, auth):
+    """
+    Tests that CRUDI features are specific to users posts
+    """
     # change the post author to another user
     with app.app_context():
         db = get_db()
