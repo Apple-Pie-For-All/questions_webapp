@@ -25,6 +25,9 @@ def test_register(client, app):
     ('tester', 'test_password', b'already registered'),
 ))
 def test_register_validate_input(client, username, password, message):
+    """
+    Test that various mis-inputs for the register page return the appropiate error
+    """
     response = client.post(
         '/auth/register',
         data={'username': username, 'password': password}
