@@ -53,5 +53,8 @@ def test_login(client, auth):
     ('tester', 'a', b'Incorrect password.'),
 ))
 def test_login_validate_input(auth, username, password, message):
+    """
+    Test that incorrect logins get the appropiate error
+    """
     response = auth.login(username, password)
     assert message in response.data
