@@ -40,7 +40,8 @@ def test_author_required(app, client, auth):
     """
     # change the post author to another user
     with app.app_context():
-        stmt = update(Post).where(Post.author_id == session['user_id']).values(author_id= session['user_id']+1) # TODO, may be rejected as invalid foreign key, need workaround
+        other_id = select(User).where(User.name == 'other_tester').first().id
+        stmt = update(Post).where(Post.author_id == session['user_id']).values(author_id = other_id)
         session.execute(stmt)
 
     auth.login()
