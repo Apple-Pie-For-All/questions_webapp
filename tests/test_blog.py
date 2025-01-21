@@ -40,7 +40,9 @@ def test_author_required(app, client, auth):
     """
     # change the post author to another user
     with app.app_context():
-        other_id = select(User).where(User.name == 'other_tester').first().id
+        other_id = session.scalars(select(User)
+                                   .where(User.name == 'other_tester')
+                                   ).first().id
         stmt = update(Post).where(Post.author_id == session['user_id']).values(author_id = other_id)
         session.execute(stmt)
 
@@ -73,3 +75,22 @@ def test_create(client, auth, app):
         # db = get_db()
         # count = db.execute('SELECT COUNT(id) FROM post').fetchone()[0]
         assert count == 2
+
+
+def test_update(client, auth, app):
+    """
+    Tests update post function
+    """
+    auth.login()
+    stmt = select(Post).where(Post.author_id == g.user['user_id'])
+    post_to_update = session.scalars(stmt).first().id
+    url_for_update = '/' + post_to_update + '/update'
+    assert client.get(url_for_update).status_code == 200
+    client.post(url_for_update, data={'title': 'updated', 'body': ''})
+
+    with app.app_context():
+        stmt = select(Post).where(Post.id == post_to_update)
+        post = session.scalars(stmt).first()
+        # db = get_db()
+        # post = db.execute('SELECT * FROM post WHERE id = 1').fetchone()
+        assert post.title == 'updated'
