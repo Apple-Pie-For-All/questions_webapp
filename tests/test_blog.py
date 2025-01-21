@@ -1,7 +1,7 @@
 import pytest
 from flask import g, session
 from flaskr.db import get_db
-from sqlalchemy import select, update
+from sqlalchemy import select, update, func
 from flaskr.db_alchemy import db_session
 from flaskr.data_model import User, Post
 
@@ -59,3 +59,17 @@ def test_author_required(app, client, auth):
 def test_exists_required(client, auth, path):
     auth.login()
     assert client.post(path).status_code == 404
+
+def test_create(client, auth, app):
+    """
+    Tests create post function
+    """
+    auth.login()
+    assert client.get('/create').status_code == 200
+    client.post('/create', data={'title': 'created', 'body': ''})
+
+    with app.app_context():
+        count = session.query(func.count(Post.id))
+        # db = get_db()
+        # count = db.execute('SELECT COUNT(id) FROM post').fetchone()[0]
+        assert count == 2
