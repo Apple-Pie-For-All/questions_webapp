@@ -8,8 +8,8 @@ from flaskr import create_app
 from sqlalchemy import event, select
 from sqlalchemy.orm import sessionmaker
 from flaskr.data_model import User, Post
-from flaskr.db_alchemy import Base, db_session
-from flaskr.db import get_db, init_db
+from flaskr.db_alchemy import Base, db_session, init_db
+from flaskr.db import get_db
 
 with open(os.path.join(os.path.dirname(__file__), 'data.sql'), 'rb') as f:
     _data_sql = f.read().decode('utf8')
@@ -31,8 +31,9 @@ def app():
 
     # Create tables for tests
     with app.app_context():
+        # Base.metadata.create_all(bind=db_session.bind)
+        # init_db(app)
         Base.metadata.create_all(bind=db_session.bind)
-        fill_db(db_session)
 
 
     yield app
@@ -42,7 +43,7 @@ def app():
         Base.metadata.drop_all(bind=db_session.bind)
 
 @pytest.fixture
-def db_session(app):
+def test_session(app):
     """
     Returns an active SQLAlchemy session for testing. 
     Ensures a clean connection.
@@ -55,6 +56,8 @@ def db_session(app):
     Session = sessionmaker(bind=connection)
     session = Session()
 
+    fill_db(session)
+
     yield session
 
     # Rollback after each test
@@ -64,20 +67,22 @@ def db_session(app):
     # Clean up the session
     session.close()
 
-@pytest.fixture
-def fill_db(db_session):
+def fill_db(session):
     '''
     Creates dummy data to test app with
     '''
     user1 = User(name='tester', password=generate_password_hash('test_password'))
     user2 = User(name='other_tester', password=generate_password_hash('other_password'))
-    db_session.add(user1)
-    db_session.add(user2)
+    session.add(user1)
+    session.add(user2)
+    session.commit()
 
     # Need to get primary key from the database (SQLalchemy lets the db handle this)
     stmt = select(User).where(User.name=='tester')
-    committed_user1 = db_session.scalars(stmt).first()
+    committed_user1 = session.scalars(stmt).first()
     post1 = Post(author_id=committed_user1.id, title='Test Post', body='A full body of text to test')
+    session.add(post1)
+    session.commit()
 
 @pytest.fixture
 def client(app):
