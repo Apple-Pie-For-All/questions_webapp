@@ -82,8 +82,9 @@ def test_update(client, auth, app):
     Tests update post function
     """
     auth.login()
-    stmt = select(Post).where(Post.author_id == g.user['user_id'])
-    post_to_update = session.scalars(stmt).first().id
+    with app.app_context():
+        stmt = select(Post).where(Post.author_id == g.user['user_id'])
+        post_to_update = session.scalars(stmt).first().id
     url_for_update = '/' + post_to_update + '/update'
     assert client.get(url_for_update).status_code == 200
     client.post(url_for_update, data={'title': 'updated', 'body': ''})
