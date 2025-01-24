@@ -1,6 +1,7 @@
 import pytest
 from flask import g, session
 from flaskr.db import get_db
+from flaskr.db_alchemy import db_session
 from flaskr.data_model import User, Post
 from sqlalchemy import event, select
 
@@ -16,7 +17,7 @@ def test_register(client, app):
     assert response.headers["Location"] == "/auth/login"
 
     with app.app_context():
-        assert select(User).where(User.name=='a').first() is not None
+        assert db_session.scalars(select(User).where(User.name=='a')).first() is not None
 
 # Parametrized arguements for next function args
 @pytest.mark.parametrize(('username', 'password', 'message'), (
@@ -44,7 +45,7 @@ def test_login(client, auth):
 
     with client:
         client.get('/')
-        assert session['user_id'] == select(User).where(User.name == 'tester').first().id
+        assert session['user_id'] == db_session.scalars(select(User).where(User.name == 'tester')).first().id
         assert g.user['username'] == 'tester'
 
 
