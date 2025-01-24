@@ -16,7 +16,7 @@ def test_register(client, app):
     assert response.headers["Location"] == "/auth/login"
 
     with app.app_context():
-        assert select(User).where(User.name=='a').one() is not None
+        assert select(User).where(User.name=='a').first() is not None
 
 # Parametrized arguements for next function args
 @pytest.mark.parametrize(('username', 'password', 'message'), (
