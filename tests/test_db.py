@@ -46,8 +46,8 @@ def test_unique_username_constraint(test_session):
     Ensure that adding a duplicate username raises an IntegrityError.
     Mostly a sanity check on a different bug
     """
-    user1 = User(name='tester', password='password1')
-    user2 = User(name='tester', password='password2')
+    user1 = User(name='tester_common_name', password='password1')
+    user2 = User(name='tester_common_name', password='password2')
 
     test_session.add(user1)
     test_session.commit()
