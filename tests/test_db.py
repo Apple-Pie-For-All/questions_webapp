@@ -1,8 +1,11 @@
 import sqlite3
 
 import pytest
+from sqlalchemy import select
 from flaskr.db import get_db
 from flaskr.db_alchemy import db_session
+from flaskr.data_model import User
+from sqlalchemy.exc import IntegrityError
 
 
 def test_db_session_lifecycle(app):
@@ -15,13 +18,14 @@ def test_db_session_lifecycle(app):
         assert session1 is session2
 
         # Perform an operation to confirm session functionality
-        session1.execute("SELECT 1") 
+        stmt = select(User)
+        session1.execute(stmt) 
 
         # Close the session
         session1.remove()
         
         with pytest.raises(Exception) as e:
-            session1.execute("SELECT 1") 
+            session1.execute(stmt) 
         assert "closed" in str(e.value).lower()
 
 def test_init_db_command(runner, monkeypatch):
@@ -36,3 +40,18 @@ def test_init_db_command(runner, monkeypatch):
     result = runner.invoke(args=['init-db'])
     assert 'Initialized' in result.output # From @click
     assert Recorder.called # From patched fake_init_db
+
+def test_unique_username_constraint(test_session):
+    """
+    Ensure that adding a duplicate username raises an IntegrityError.
+    Mostly a sanity check on a different bug
+    """
+    user1 = User(name='tester', password='password1')
+    user2 = User(name='tester', password='password2')
+
+    test_session.add(user1)
+    test_session.commit()
+
+    with pytest.raises(IntegrityError):
+        test_session.add(user2)
+        test_session.commit()
