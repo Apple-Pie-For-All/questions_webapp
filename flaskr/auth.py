@@ -5,7 +5,6 @@ from flask import (
 )
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from flaskr.db import get_db
 from flaskr.db_alchemy import db_session
 from flaskr.data_model import User
 from sqlalchemy import select

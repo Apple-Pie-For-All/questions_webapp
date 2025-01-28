@@ -3,7 +3,6 @@ from flask import (
 )
 from werkzeug.exceptions import abort
 from flaskr.auth import login_required
-from flaskr.db import get_db
 from .db_alchemy import db_session
 from .data_model import User, Post
 from sqlalchemy import select

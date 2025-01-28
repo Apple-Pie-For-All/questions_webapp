@@ -1,6 +1,5 @@
 import pytest
 from flask import g, session
-from flaskr.db import get_db
 from flaskr.db_alchemy import db_session
 from flaskr.data_model import User, Post
 from sqlalchemy import event, select

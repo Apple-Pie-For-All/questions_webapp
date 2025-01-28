@@ -9,7 +9,6 @@ from sqlalchemy import event, select
 from sqlalchemy.orm import sessionmaker
 from flaskr.data_model import User, Post
 from flaskr.db_alchemy import Base, db_session, init_db
-from flaskr.db import get_db
 
 with open(os.path.join(os.path.dirname(__file__), 'data.sql'), 'rb') as f:
     _data_sql = f.read().decode('utf8')
