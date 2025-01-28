@@ -2,7 +2,6 @@ import sqlite3
 
 import pytest
 from sqlalchemy import select
-from flaskr.db import get_db
 from flaskr.db_alchemy import db_session
 from flaskr.data_model import User
 from sqlalchemy.exc import IntegrityError
