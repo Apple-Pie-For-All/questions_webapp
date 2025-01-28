@@ -24,10 +24,11 @@ def test_register(client, app):
     ('a', '', b'Password is required.'),
     ('tester', 'test_password', b'already registered'),
 ))
-def test_register_validate_input(client, username, password, message):
+def test_register_validate_input(client, username, password, message, test_session):
     """
     Test that various mis-inputs for the register page return the appropiate error
     """
+    stmt = select(User.name).order_by(User.name.asc())
     response = client.post(
         '/auth/register',
         data={'username': username, 'password': password}
