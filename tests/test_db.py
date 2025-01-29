@@ -18,14 +18,16 @@ def test_db_session_lifecycle(app):
 
         # Perform an operation to confirm session functionality
         stmt = select(User)
-        session1.execute(stmt) 
-
+        result = session1.execute(stmt) 
+        assert result is not None
         # Close the session
         session1.remove()
         
-        with pytest.raises(Exception) as e:
-            session1.execute(stmt) 
-        assert "closed" in str(e.value).lower()
+        # sqlalchemy sessions will re-open when called. By default, session.close()
+        # is closer to session.reset(). The following assert does not apply.
+        # with pytest.raises(Exception) as e:
+        #     session1.execute(stmt) 
+        # assert "closed" in str(e.value).lower()
 
 def test_init_db_command(runner, monkeypatch):
     class Recorder(object):
