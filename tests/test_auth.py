@@ -35,17 +35,18 @@ def test_register_validate_input(client, username, password, message, test_sessi
     )
     assert message in response.data
 
-def test_login(client, auth):
+def test_login(client, auth, test_session):
     """
     Test that users can login successfully
     """
     assert client.get('/auth/login').status_code == 200
     response = auth.login()
     assert response.headers["Location"] == "/"
+    print (db_session.scalars(select(User)).all())
 
     with client:
         client.get('/')
-        assert session['user_id'] == db_session.scalars(select(User).where(User.name == 'tester')).first().id
+        assert session['user_id'] == test_session.scalars(select(User).where(User.name == 'tester')).first().id
         assert g.user['username'] == 'tester'
 
 
