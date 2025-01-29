@@ -44,7 +44,7 @@ def test_init_db_command(runner, monkeypatch):
     assert Recorder.called # From patched fake_init_db
 
 @pytest.mark.filterwarnings("ignore:transaction already deassociated from connection:sqlalchemy.exc.SAWarning")
-def test_unique_username_constraint(test_session):
+def test_unique_username_constraint(app):
     """
     Ensure that adding a duplicate username raises an IntegrityError.
     Mostly a sanity check on a different bug
@@ -52,9 +52,9 @@ def test_unique_username_constraint(test_session):
     user1 = User(name='tester_common_name', password='password1')
     user2 = User(name='tester_common_name', password='password2')
 
-    test_session.add(user1)
-    test_session.commit()
+    db_session.add(user1)
+    db_session.commit()
 
     with pytest.raises(IntegrityError):
-        test_session.add(user2)
-        test_session.commit()
+        db_session.add(user2)
+        db_session.commit()
