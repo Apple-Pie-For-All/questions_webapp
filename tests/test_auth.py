@@ -24,30 +24,28 @@ def test_register(client, app):
     ('a', '', b'Password is required.'),
     ('tester', 'test_password', b'already registered'),
 ))
-def test_register_validate_input(client, username, password, message, test_session):
+def test_register_validate_input(client, username, password, message):
     """
     Test that various mis-inputs for the register page return the appropiate error
     """
-    stmt = select(User.name).order_by(User.name.asc())
     response = client.post(
         '/auth/register',
         data={'username': username, 'password': password}
     )
     assert message in response.data
 
-def test_login(client, auth, test_session):
+def test_login(client, auth):
     """
     Test that users can login successfully
     """
     assert client.get('/auth/login').status_code == 200
     response = auth.login()
     assert response.headers["Location"] == "/"
-    print (db_session.scalars(select(User)).all())
 
     with client:
         client.get('/')
-        assert session['user_id'] == test_session.scalars(select(User).where(User.name == 'tester')).first().id
-        assert g.user['username'] == 'tester'
+        assert session['user_id'] == db_session.scalars(select(User).where(User.name == 'tester')).first().id
+        assert g.user.name == 'tester'
 
 
 @pytest.mark.parametrize(('username', 'password', 'message'), (
