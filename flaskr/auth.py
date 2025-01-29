@@ -76,7 +76,7 @@ def login():
 
         if error is None:
             session.clear()
-            session['user_id'] = user.id
+            session['user_id'] = user.id # Session will persist data in cookie
             return redirect(url_for('index'))
 
         flash(error)
@@ -95,7 +95,7 @@ def load_logged_in_user():
         g.user = None
     else:
         stmt = select(User).where(User.id == user_id)
-        g.user = db_session.scalars(stmt).first()
+        g.user = db_session.scalars(stmt).first() # g is good only for the request? Ok not to strip password? TODO double check.
 
 @bp.route('/logout')
 def logout():
