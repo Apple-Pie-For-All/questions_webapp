@@ -32,6 +32,7 @@ def app():
     with app.app_context():
         Base.metadata.create_all(bind=db_session.bind)
 
+    fill_db(db_session)
 
     yield app
 
