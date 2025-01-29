@@ -43,6 +43,7 @@ def test_init_db_command(runner, monkeypatch):
     assert 'Initialized' in result.output # From @click
     assert Recorder.called # From patched fake_init_db
 
+@pytest.mark.filterwarnings("ignore:transaction already deassociated from connection:sqlalchemy.exc.SAWarning")
 def test_unique_username_constraint(test_session):
     """
     Ensure that adding a duplicate username raises an IntegrityError.
