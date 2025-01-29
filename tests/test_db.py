@@ -1,6 +1,7 @@
 import sqlite3
 
 import pytest
+import warnings
 from sqlalchemy import select
 from flaskr.db_alchemy import db_session
 from flaskr.data_model import User
@@ -32,11 +33,11 @@ def test_db_session_lifecycle(app):
 def test_init_db_command(runner, monkeypatch):
     class Recorder(object):
         called = False
-    def fake_init_db():
+    def fake_init_db(*args, **kwargs): # the @click decorator adds hidden args which need to be captured
         Recorder.called = True
 
     # Replace the true init_db command with the fake defined above
-    monkeypatch.setattr('flaskr.db.init_db', fake_init_db)
+    monkeypatch.setattr('flaskr.db_alchemy.init_db', fake_init_db)
     # Runner mimics clicking on the button (triggers @click)
     result = runner.invoke(args=['init-db'])
     assert 'Initialized' in result.output # From @click
