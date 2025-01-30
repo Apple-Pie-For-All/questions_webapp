@@ -33,19 +33,21 @@ def test_login_required(client, path):
     assert response.headers["Location"] == "/auth/login"
 
 
-def test_author_required(app, client, auth):
+def test_author_required(client, auth):
     """
     Tests that CRUDI features are specific to users posts
     """
     # change the post author to another user
-    with app.app_context():
-        other_id = session.scalars(select(User)
-                                   .where(User.name == 'other_tester')
-                                   ).first().id
-        stmt = update(Post).where(Post.author_id == session['user_id']).values(author_id = other_id)
-        session.execute(stmt)
+    with client:
+        auth.login()
+        other_id = db_session.scalars(select(User)
+                                      .where(User.name == 'other_tester')
+                                     ).first().id
+        stmt = update(Post).where(Post.author_id == session['user_id'])\
+                           .values(author_id = other_id)
+        db_session.execute(stmt)
+        db_session.commit()
 
-    auth.login()
     # current user can't modify other user's post
     assert client.post('/1/update').status_code == 403
     assert client.post('/1/delete').status_code == 403
