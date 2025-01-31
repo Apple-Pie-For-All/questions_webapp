@@ -124,7 +124,7 @@ def delete(id):
     '''
     post = get_post(id)
 
-    if post.author_id != g.user['id']:
+    if post.author_id != g.user.id:
         abort(403)
 
     # Delete the post from the database
