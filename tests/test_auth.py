@@ -47,6 +47,15 @@ def test_login(client, auth):
         assert session['user_id'] == db_session.scalars(select(User).where(User.name == 'tester')).first().id
         assert g.user.name == 'tester'
 
+def test_logout_works(client, auth):
+    with client:
+        auth.login()
+        assert session['user_id'] is not None
+        auth.logout()
+        assert session.get('user_id') is None # direct key access results in error
+        response = client.get('/')
+        assert b'Log In' in response.data
+
 
 @pytest.mark.parametrize(('username', 'password', 'message'), (
     ('a', 'test_password', b'Incorrect username.'),
