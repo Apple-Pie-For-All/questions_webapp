@@ -78,7 +78,10 @@ def fill_db(session):
     # Need to get primary key from the database (SQLalchemy lets the db handle this)
     stmt = select(User).where(User.name=='tester')
     committed_user1 = session.scalars(stmt).first()
+    stmt = select(User).where(User.name=='other_tester')
+    committed_user2 = session.scalars(stmt).first()
     post1 = Post(author_id=committed_user1.id, title='Test Post', body='A full body of text to test')
+    post1 = Post(author_id=committed_user2.id, title='Other User Test Post', body='Yet more text.')
     session.add(post1)
     session.commit()
 
