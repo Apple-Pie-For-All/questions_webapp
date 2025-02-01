@@ -81,8 +81,9 @@ def fill_db(session):
     stmt = select(User).where(User.name=='other_tester')
     committed_user2 = session.scalars(stmt).first()
     post1 = Post(author_id=committed_user1.id, title='Test Post', body='A full body of text to test')
-    post1 = Post(author_id=committed_user2.id, title='Other User Test Post', body='Yet more text.')
+    post2 = Post(author_id=committed_user2.id, title='Other User Test Post', body='Yet more text.')
     session.add(post1)
+    session.add(post2)
     session.commit()
 
 @pytest.fixture
