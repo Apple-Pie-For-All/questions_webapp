@@ -129,3 +129,16 @@ def test_delete(client, auth, app):
 
         # Post should no longer exist
         assert post is None
+
+def test_delete_requires_login(client, auth):
+    """
+    Not coming up in test coverage report, otherwise redundant with test_author_required
+    """
+    with client:
+        auth.login()
+        stmt = select(Post).where(Post.author_id != session['user_id'])
+        post_to_delete = db_session.scalars(stmt).first().id
+        url_for_delete = '/' + str(post_to_delete) + '/delete'
+        response = client.post(url_for_delete)
+
+    assert response.status_code == 403
