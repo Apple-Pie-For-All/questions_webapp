@@ -30,7 +30,7 @@ def app():
 
     # Create tables for tests
     with app.app_context():
-        Base.metadata.create_all(bind=db_session.bind)
+        init_db(db_session.bind)
 
     fill_db(db_session)
 
