@@ -67,14 +67,15 @@ def test_create(client, auth, app):
     """
     Tests create post function
     """
+    stmt = select(func.count(Post.id))
+    prev_count = db_session.scalar(stmt)
     auth.login()
     assert client.get('/create').status_code == 200
     client.post('/create', data={'title': 'created', 'body': ''})
 
-    with app.app_context():
-        stmt = select(func.count(Post.id))
-        count = db_session.scalar(stmt)
-        assert count == 2
+    stmt = select(func.count(Post.id))
+    count = db_session.scalar(stmt)
+    assert count == prev_count + 1
 
 
 def test_update(client, auth, app):
