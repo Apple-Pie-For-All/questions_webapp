@@ -45,6 +45,10 @@ def create_app(test_config=None):
     app.register_blueprint(debug.bp)
     app.add_url_rule('/debug', endpoint='debug')
 
+    from . import view
+    app.register_blueprint(view.bp)
+    app.add_url_rule('/view', endpoint='view')
+
     from flaskr.db_alchemy import db_session
     @app.teardown_appcontext
     def shutdown_session(exception=None):
