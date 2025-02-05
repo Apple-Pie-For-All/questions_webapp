@@ -12,4 +12,21 @@
     </header>
     <p class="body">{{ post.body }}</p>
 </article>
+{% for comment in post.comments %}
+<article class="comment">
+  <header>
+    <div>
+      <h2>{{ comment.author.name }}</h2>
+      <div class="about">at {{ comment.created.strftime('%Y-%m-%d') }}</div>
+    </div>
+    {% if g.user.id == comment.author_id %}
+      <a class="action" href="{{ url_for('blog.update', id=post.id) }}">Edit</a>
+    {% endif %}
+  </header>
+  <p class="body">{{ comment.text }}</p>
+</article>
+{% if not loop.last %}
+  <hr>
+{% endif %}
+{% endfor %}
 {% endblock %}
