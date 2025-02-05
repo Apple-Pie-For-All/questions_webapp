@@ -33,7 +33,22 @@ class Post(Base):
     body: Mapped[str] = mapped_column(String, nullable=False)
 
     author = relationship('User', back_populates='posts')
+    comments: Mapped[List["Comment"]] = relationship()
 
     def __repr__(self) -> str:
         return f"Post(id={self.id}, author_id={self.author_id}, created={self.created})"
     
+class Comment(Base):
+    '''
+    Define a Comment for the ORM with parrent Post, test, author, and date
+    '''
+
+    __tablename__ = 'comment'
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    parent_post_id: Mapped[int] = mapped_column(ForeignKey('post.id'))
+    author_id: Mapped[int] = mapped_column(ForeignKey('user.id'))
+    created: Mapped[datetime] = mapped_column(insert_default=func.now())
+    text: Mapped[str] = mapped_column(String, nullable=False)
+
+    author = relationship('User', back_populates='parent_post')
