@@ -51,4 +51,4 @@ class Comment(Base):
     created: Mapped[datetime] = mapped_column(insert_default=func.now())
     text: Mapped[str] = mapped_column(String, nullable=False)
 
-    author = relationship('User', back_populates='parent_post')
+    author: Mapped[User] = relationship()
