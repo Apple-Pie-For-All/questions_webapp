@@ -49,6 +49,6 @@ class Comment(Base):
     parent_post_id: Mapped[int] = mapped_column(ForeignKey('post.id'))
     author_id: Mapped[int] = mapped_column(ForeignKey('user.id'))
     created: Mapped[datetime] = mapped_column(insert_default=func.now())
-    text: Mapped[str] = mapped_column(String, nullable=False)
+    body: Mapped[str] = mapped_column(String, nullable=False)
 
     author: Mapped[User] = relationship()
