@@ -28,12 +28,10 @@
 {% if not loop.last %}
   <hr>
 {% endif %}
-    <form action="../comment" method="post">
-        <label for="text">New Comment:</label>
-        <input name="text" id="text" value="{{ request.form['text'] }}" required>
-        <!-- <label for="body">Body</label>
-        <textarea name="body" id="body">{{ request.form['body'] }}</textarea> -->
-        <input type="submit" value="Comment">
-    </form>
 {% endfor %}
+<form action="../comment" method="post">
+    <label for="text">New Comment:</label>
+    <textarea name="text" id="text" required>{{ request.form['text'] }}</textarea>
+    <input type="submit" value="Comment">
+</form>
 {% endblock %}
