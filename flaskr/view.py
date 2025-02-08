@@ -30,8 +30,8 @@ def add_comment(post_id):
     if comment_body == '':
         flash("Comment text is required")
     else:
-        new_comment = Comment(parent_post_id=post_id, author_id=g.user.id, text=comment_body)
+        new_comment = Comment(parent_post_id=post_id, author_id=g.user.id, body=comment_body)
         db_session.add(new_comment)
         db_session.commit()
 
-        return redirect(url_for(view.view, id=post_id))
+        return redirect(url_for("view.view", id=post_id))
