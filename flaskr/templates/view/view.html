@@ -29,7 +29,7 @@
   <hr>
 {% endif %}
 {% endfor %}
-<form action="../comment" method="post">
+<form action={{ url_for("view.add_comment", post_id=post.id) }} method="post">
     <label for="text">New Comment:</label>
     <textarea name="text" id="text" required>{{ request.form['text'] }}</textarea>
     <input type="submit" value="Comment">
