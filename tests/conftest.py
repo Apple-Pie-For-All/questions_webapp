@@ -54,7 +54,7 @@ def test_session(app):
     Session = sessionmaker(bind=connection)
     session = Session()
 
-    fill_db(session)
+    # fill_db(session) # Should be already filled, holdover from previous iteration
 
     yield session
 
