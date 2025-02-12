@@ -106,17 +106,20 @@ def test_update(client, auth, app):
     # post = db.execute('SELECT * FROM post WHERE id = 1').fetchone()
     assert post.title == 'updated'
 
-@pytest.mark.parametrize('path', (
+@pytest.mark.parametrize('path_func', (
     '/create',
-    '/1/update',
+    lambda test_session: f"/{str(test_session.scalars(select(Post).where(Post.author_id == session['user_id'])).first().id)}/update",
 ))
-def test_create_update_validate(client, auth, path):
+def test_create_update_validate(client, auth, path_func, test_session):
     """
-    Tests validation of create/update forms
+    Tests validation of create/update forms with UUID-based IDs
     """
-    auth.login()
-    response = client.post(path, data={'title': '', 'body': ''})
-    assert b'Title is required.' in response.data
+    with client:
+        auth.login()
+        path = path_func(test_session) if callable(path_func) else path_func
+        response = client.post(path, data={'title': '', 'body': ''})
+        assert b'Title is required.' in response.data
+
 
 def test_delete(client, auth, app):
     """
