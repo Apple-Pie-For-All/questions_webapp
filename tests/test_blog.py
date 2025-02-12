@@ -1,5 +1,5 @@
-import pytest
-from flask import g, session
+import pytest, uuid
+from flask import g, session, url_for
 from sqlalchemy import select, update, func
 from flaskr.db_alchemy import db_session
 from flaskr.data_model import User, Post
@@ -13,12 +13,17 @@ def test_index(client, auth):
     assert b"Log In" in response.data
     assert b"Register" in response.data
 
-    auth.login()
-    response = client.get('/')
+    with client:
+        auth.login()
+        user_post = db_session.scalars(select(Post)
+                                          .where(Post.author_id == session['user_id'])
+                                          ).first()
+        update_url = ('href="/' + str(user_post.id) + '/update"').encode()
+        response = client.get('/')
     assert b'Log Out' in response.data
     assert b'Test Post' in response.data
     assert b'A full body of text to test' in response.data
-    assert b'href="/1/update"' in response.data
+    assert update_url in response.data
 
 @pytest.mark.parametrize('path', (
     '/create',
@@ -40,6 +45,9 @@ def test_author_required(client, auth):
     # change the post author to another user
     with client:
         auth.login()
+        user_post = db_session.scalars(select(Post)
+                                          .where(Post.author_id == session['user_id'])
+                                          ).first()
         other_id = db_session.scalars(select(User)
                                       .where(User.name == 'other_tester')
                                      ).first().id
@@ -48,20 +56,22 @@ def test_author_required(client, auth):
         db_session.execute(stmt)
         db_session.commit()
 
-    # current user can't modify other user's post
-    assert client.post('/1/update').status_code == 403
-    assert client.post('/1/delete').status_code == 403
-    # current user doesn't see edit link
-    assert b'href="/1/update"' not in client.get('/').data
+        # current user can't modify other user's post
+        assert client.post(url_for('blog.update', id=user_post.id)).status_code == 403
+        assert client.post(url_for('blog.delete', id=user_post.id)).status_code == 403
+        # current user doesn't see edit link
+        update_url = ('href="/' + str(user_post.id) + '/update"').encode()
+        assert update_url not in client.get('/').data
 
 
 @pytest.mark.parametrize('path', (
-    '/0/update',
-    '/0/delete',
+    'update',
+    'delete',
 ))
 def test_exists_required(client, auth, path):
     auth.login()
-    assert client.post(path).status_code == 404
+    url = '/' + str(uuid.uuid4()) + '/' + path
+    assert client.post(url).status_code == 404
 
 def test_create(client, auth, app):
     """

@@ -52,7 +52,7 @@ def test_logout_works(client, auth):
         auth.login()
         assert session['user_id'] is not None
         auth.logout()
-        assert session.get('user_id') is None # direct key access results in error
+        assert session.get('user_id') is None # direct key access results in error if not there
         response = client.get('/')
         assert b'Log In' in response.data
 
