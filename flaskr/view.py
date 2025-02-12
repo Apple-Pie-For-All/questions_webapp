@@ -10,7 +10,7 @@ from sqlalchemy.orm import joinedload
 
 bp = Blueprint("view", __name__)
 
-@bp.route('/<int:id>/view')
+@bp.route('/<string:id>/view')
 def view(id):
     """
     Show a specified post in detail
@@ -20,7 +20,7 @@ def view(id):
 
     return render_template('view/view.html', post=post_for_page)
 
-@bp.route('/<int:post_id>/comment', methods=("POST",))
+@bp.route('/<string:post_id>/comment', methods=("POST",))
 @login_required
 def add_comment(post_id):
     """

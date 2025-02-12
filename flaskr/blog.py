@@ -1,6 +1,7 @@
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, url_for
 )
+import uuid
 from werkzeug.exceptions import abort
 from flaskr.auth import login_required
 from .db_alchemy import db_session
@@ -73,7 +74,7 @@ def get_post(id, check_author=True):
     #     (id,)
     # ).fetchone()
 
-    stmt = select(Post).where(Post.id == id)
+    stmt = select(Post).where(Post.id == uuid.UUID(id))
     post = db_session.scalars(stmt).first()
 
     if post is None:
@@ -84,7 +85,7 @@ def get_post(id, check_author=True):
 
     return post
 
-@bp.route('/<int:id>/update', methods=('GET', 'POST'))
+@bp.route('/<string:id>/update', methods=('GET', 'POST'))
 @login_required
 def update(id):
     '''
@@ -115,17 +116,19 @@ def update(id):
 
     return render_template('blog/update.html', post=post)
 
-@bp.route('/<int:id>/delete', methods=('POST',))
+@bp.route('/<string:id>/delete', methods=('POST',))
 @login_required
 def delete(id):
     '''
     Deletes designated post when author requests. 
     Returns 403 if user is not author.
     '''
-    post = get_post(id)
+    post = get_post(id) # get post was implementing the 403 check
 
-    if post.author_id != g.user.id:
-        abort(403)
+    # This never got called when implemented, even with tests looking
+    # for the 403 when called. @login_required must cover this (according to coverage.py)
+    # if post.author_id != g.user.id:
+    #     abort(403)
 
     # Delete the post from the database
     db_session.delete(post)
