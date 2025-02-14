@@ -21,7 +21,7 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        # db = get_db()
+
         error = None
 
         if not username:
@@ -31,11 +31,6 @@ def register():
 
         if error is None:
             try:
-                # db.execute(
-                #     "INSERT INTO user (username, password) VALUES (?, ?)",
-                #     (username, generate_password_hash(password))
-                # )
-                # db.commit()
                 new_user = User(name=username, password=generate_password_hash(password))
                 db_session.add(new_user)
                 db_session.commit()
@@ -59,11 +54,8 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        # db = get_db()
+        
         error = None
-        # user = db.execute(
-        #     'SELECT * FROM user WHERE username = ?', (username,)
-        # ).fetchone()
 
         # Load user first
         stmt = select(User).where(User.name == username)
