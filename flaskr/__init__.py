@@ -34,6 +34,9 @@ def create_app(test_config=None):
     from . import db_alchemy
     db_alchemy.init_app(app)
 
+    from . import db_seed
+    db_seed.init_seed_command(app)
+
     from . import auth
     app.register_blueprint(auth.bp)
 
