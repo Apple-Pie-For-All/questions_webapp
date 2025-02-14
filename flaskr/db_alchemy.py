@@ -16,7 +16,7 @@ def init_db(engine):
 @click.command('init-db')
 def init_db_command():
     '''
-    Define cmdline arg to init database per ORM model. Might be obsolete.
+    Define cmdline arg to init database per ORM model.
     '''
     init_db(db_session.bind)
     click.echo('Initialized the database with SQLalchemy.')
