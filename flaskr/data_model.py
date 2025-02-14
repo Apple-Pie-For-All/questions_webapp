@@ -8,7 +8,11 @@ from flaskr.db_alchemy import Base
 class User(Base):
     '''
     Define a User table for the ORM with name and password. 
-    Password should be a SHA256 hash
+    id:         uuid assigned by orm
+    name:       user name, must be unique
+    password:   hashed SHA256, cannot be null
+
+    posts:      orm back-populated list of posts
     '''
     __tablename__ = 'user'
 
@@ -24,6 +28,14 @@ class User(Base):
 class Post(Base):
     '''
     Define a Post table for the ORM with author_id, created(datetime), title, and body.
+    id:         uuid assigned by orm
+    author_id:  user id of author
+    created:    datetime, defaults to now()
+    title:      title string, cannot be null
+    body:       body string, cannot be null
+
+    author:     orm back-populated author user object
+    comments:   orm back-populated list of comments associated with posts
     '''
     __tablename__ = 'post'
 
@@ -41,7 +53,14 @@ class Post(Base):
     
 class Comment(Base):
     '''
-    Define a Comment for the ORM with parrent Post, test, author, and date
+    Define a Comment for the ORM with parent Post, test, author, and date
+    id:             uuid assigned by orm
+    parent_post_id: post id of parent post
+    author_id:      user id of author
+    created:        datetime, defaults to now()
+    body:           the comment itself, string, cannot be null
+
+    author:         orm back-populated user from author
     '''
 
     __tablename__ = 'comment'
