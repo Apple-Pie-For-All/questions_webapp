@@ -35,4 +35,4 @@ def add_comment(post_id):
         db_session.add(new_comment)
         db_session.commit()
 
-        return redirect(url_for("view.view", id=post_id))
+    return redirect(url_for("view.view", id=post_id))
