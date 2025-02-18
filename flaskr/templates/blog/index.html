@@ -12,7 +12,9 @@
     <article class="post">
       <header>
         <div>
-          <h1>{{ post.title }}</h1>
+          <a class=action href="{{ url_for('view.view', id=post.id) }}">
+            <h1>{{ post.title }}</h1>
+          </a>
           <div class="about">by {{ post.author.name }} on {{ post.created.strftime('%Y-%m-%d') }}</div>
         </div>
         {% if g.user.id == post.author_id %}
