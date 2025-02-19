@@ -9,9 +9,9 @@ from .data_model import User, Post, Comment
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload
 
-bp = Blueprint("view", __name__)
+bp = Blueprint("post", __name__)
 
-@bp.route('/<string:id>/view')
+@bp.route('/<string:id>')
 def view(id):
     """
     Show a specified post in detail
@@ -19,7 +19,7 @@ def view(id):
     stmt = select(Post).where(Post.id == uuid.UUID(id))
     post_for_page = db_session.scalars(stmt).first()
 
-    return render_template('view/view.html', post=post_for_page)
+    return render_template('post/post.html', post=post_for_page)
 
 @bp.route('/<string:post_id>/comment', methods=("POST",))
 @login_required
@@ -35,4 +35,4 @@ def add_comment(post_id):
         db_session.add(new_comment)
         db_session.commit()
 
-    return redirect(url_for("view.view", id=post_id))
+    return redirect(url_for("post.view", id=post_id))

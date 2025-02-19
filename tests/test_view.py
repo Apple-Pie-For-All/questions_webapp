@@ -12,7 +12,7 @@ def test_view(client, auth):
     with client:
         auth.login()
         post = db_session.scalars(select(Post)).first()
-    response = client.get('/' + str(post.id) + "/view")
+    response = client.get('/' + str(post.id))
 
     assert b"Log Out" in response.data
 
