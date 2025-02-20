@@ -33,9 +33,15 @@
 {% endif %}
 {% endfor %}
 <br>
+{% if g.user %}
 <form action={{ url_for("post.add_comment", post_id=post.id) }} method="post">
     <label for="text">New Comment:</label>
     <textarea name="text" id="text" required>{{ request.form['text'] }}</textarea>
     <input type="submit" value="Comment">
 </form>
+{% else %}
+<div class="reminder">
+  <p>Login to comment</p>
+</div>
+{% endif %}
 {% endblock %}
