@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <title> {% block title %}{% endblock %} - Flaskr App</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<script src="{{ url_for('static', filename='js/collapse.js') }}"></script>
 
 <nav>
     <h1><a href="{{ url_for('index') }}">Flaskr</a></h1>

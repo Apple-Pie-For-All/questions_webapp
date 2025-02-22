@@ -16,7 +16,7 @@
 <h3>Comments:</h3>
 {% for comment in post.comments %}
 <article class="comment">
-    <div>
+    <div class="comment-header" onclick="toggleComment('{{ comment.id }}')">
       <div class="comment_author">
         {{ comment.author.name | e }}
       </div>
@@ -26,7 +26,9 @@
       <div class="comment_date">{{ comment.created.strftime('%Y-%m-%d at %H:%M') }}</div>
     </div>
     <br>
-  <p class="body">{{ comment.body | e }}</p>
+    <div class="comment-content" id="comment-{{ comment.id }}">
+      <p class="body">{{ comment.body | e }}</p>
+    </div>
 </article>
 {% if not loop.last %}
   <hr>

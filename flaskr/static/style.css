@@ -25,5 +25,6 @@ nav ul li a, nav ul li span, header .action { display: block; padding: 0.5rem; }
 input.danger { color: #cc2f2e; }
 input[type=submit] { align-self: start; min-width: 10em; }
 .comment_author { float: left; margin-right: 1em; font-size: 1.0em; font-weight: bold;}
-.comment_date { float: right; font-size: 0.9em; font-style: italic; color: slategray}
-.reminder {font-size: 1em; font-style: italic; color: grey}
+.comment_date { float: right; font-size: 0.9em; font-style: italic; color: slategray }
+.reminder {font-size: 1em; font-style: italic; color: grey }
+.hidden { display: none; }
