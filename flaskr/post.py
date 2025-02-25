@@ -36,3 +36,22 @@ def add_comment(post_id):
         db_session.commit()
 
     return redirect(url_for("post.view", id=post_id))
+
+@bp.route('/edit-comment/<string:id>', methods=("POST",))
+@login_required
+def edit_comment(id):
+    """
+    Edit a pre-existing comment
+    """
+    stmt = select(Comment).where(Comment.id == uuid.UUID(id))
+    revised_comment = db_session.scalars(stmt).first()
+
+    if revised_comment == None:
+        abort(403) # Should this be 404?
+
+    if revised_comment.author_id != g.user.id:
+        abort(403)
+
+    revised_comment.body = request.form['text']
+    db_session.commit
+    
