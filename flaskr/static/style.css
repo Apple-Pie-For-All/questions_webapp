@@ -16,7 +16,7 @@ nav ul li a, nav ul li span, header .action { display: block; padding: 0.5rem; }
 .post > header > div:first-of-type { flex: auto; }
 .post > header h1 { font-size: 1.5em; margin-bottom: 0; }
 .post .about { color: slategray; font-style: italic; }
-.post .body { white-space: pre-line; }
+.post .body { white-space: pre-line; padding-left: 0.4em;}
 .content:last-child { margin-bottom: 0; }
 .content form { margin: 1em 0; display: flex; flex-direction: column; }
 .content label { font-weight: bold; margin-bottom: 0.5em; }
@@ -24,8 +24,9 @@ nav ul li a, nav ul li span, header .action { display: block; padding: 0.5rem; }
 .content textarea { min-height: 12em; resize: vertical; }
 input.danger { color: #cc2f2e; }
 input[type=submit] { align-self: start; min-width: 10em; }
-.comment_author { float: left; margin-right: 1em; font-size: 1.0em; font-weight: bold;}
-.comment_date { float: right; font-size: 0.9em; font-style: italic; color: slategray }
+.comment_author { float: left; margin-right: 1em; font-size: 1.0em; font-weight: bold; padding-left: 0.3em; }
+.comment_date { float: right; font-size: 0.9em; font-style: italic; color: black; padding: 0.1em; padding-right: 0.4em; }
 .reminder {font-size: 1em; font-style: italic; color: grey }
 .hidden { display: none; }
 .comment-header { overflow:hidden; background-color: lightgray; padding: 0.1em; padding-top: 0.2em;}
+.comment-body { padding-left: 0.4em; }

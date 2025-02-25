@@ -27,7 +27,7 @@
   </div>
   <br>
   <div class="comment-content" id="comment-{{ comment.id }}">
-    <p class="body">{{ comment.body | e }}</p>
+    <p class="comment-body">{{ comment.body | e }}</p>
   </div>
 </article>
 {% if not loop.last %}
